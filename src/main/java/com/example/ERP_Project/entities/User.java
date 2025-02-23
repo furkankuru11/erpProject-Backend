@@ -20,7 +20,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @JsonProperty("username")
     @Column(unique = true, nullable = false)
     private String userName;
     
@@ -35,7 +34,15 @@ public class User {
     public void setUserName(String userName) { this.userName = userName; }
 
     public String getPassword() { return password; }
-    public void setPassword(String password) { 
-        this.password = new BCryptPasswordEncoder().encode(password);
+
+    // JSON'dan gelen "username" alanını "userName" ile eşleştir
+    @JsonProperty("username")
+    public void setUserNameFromJson(String username) {
+        this.userName = username;
+    }
+
+    @JsonProperty("username")
+    public String getUserNameForJson() {
+        return this.userName;
     }
 }
