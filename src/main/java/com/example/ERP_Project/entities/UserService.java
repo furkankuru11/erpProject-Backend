@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
+import java.time.LocalDateTime;
 
 @Service
 public class UserService {
@@ -14,13 +15,17 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     
-    public Optional<User> findByUserName(String userName) {
-        return userRepository.findByUserName(userName);
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
     
     public User saveUser(User user) {
-        if (userRepository.findByUserName(user.getUserName()).isPresent()) {
-            throw new RuntimeException("Bu kullanıcı adı zaten kullanılıyor!");
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new RuntimeException("Bu email zaten kullanılıyor!");
+        }
+        
+        if (userRepository.findByName(user.getName()).isPresent()) {
+            throw new RuntimeException("Bu isim zaten kullanılıyor!");
         }
         
         if (user.getPassword().length() < 6) {
@@ -33,5 +38,10 @@ public class UserService {
     
     public boolean validatePassword(String rawPassword, String encodedPassword) {
         return passwordEncoder.matches(rawPassword, encodedPassword);
+    }
+    
+    public void updateLastLogin(User user) {
+        user.setLastLogin(LocalDateTime.now());
+        userRepository.save(user);
     }
 }

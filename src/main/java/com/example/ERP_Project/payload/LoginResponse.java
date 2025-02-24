@@ -9,5 +9,7 @@ public class LoginResponse {
     private boolean success;
     private String message;
     private String token;
-    private String userName;
+    private String name;
+    private String surname;
+    private String email;
 } 

@@ -1,15 +1,8 @@
 package com.example.ERP_Project.entities;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
-import jakarta.persistence.Column;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="users")
@@ -20,29 +13,38 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(unique = true, nullable = false)
-    private String userName;
+    @Column(unique = true, nullable = false, length = 50)
+    private String name;
+    
+    @Column(unique = true, nullable = false, length = 50)
+    private String surname;
     
     @Column(nullable = false)
     private String password;
-
-    // Getter ve Setter'lar
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getUserName() { return userName; }
-    public void setUserName(String userName) { this.userName = userName; }
-
-    public String getPassword() { return password; }
-
-    // JSON'dan gelen "username" alanını "userName" ile eşleştir
-    @JsonProperty("username")
-    public void setUserNameFromJson(String username) {
-        this.userName = username;
+    
+    @Column(unique = true, nullable = false, length = 100)
+    private String email;
+    
+    @Column(nullable = false, length = 15)
+    private String phone;
+    
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
+    
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+    
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
-
-    @JsonProperty("username")
-    public String getUserNameForJson() {
-        return this.userName;
+    
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 }

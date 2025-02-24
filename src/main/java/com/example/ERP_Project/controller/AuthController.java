@@ -3,7 +3,6 @@ package com.example.ERP_Project.controller;
 import com.example.ERP_Project.entities.User;
 import com.example.ERP_Project.entities.UserService;
 import com.example.ERP_Project.payload.LoginRequest;
-import com.example.ERP_Project.payload.JwtResponse;
 import com.example.ERP_Project.payload.MessageResponse;
 import com.example.ERP_Project.payload.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,7 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
             // Kullanıcıyı veritabanında ara
-            Optional<User> userOptional = userService.findByUserName(loginRequest.getUserName());
+            Optional<User> userOptional = userService.findByEmail(loginRequest.getEmail());
             
             if (!userOptional.isPresent()) {
                 return ResponseEntity
@@ -46,13 +45,15 @@ public class AuthController {
             }
             
             // Şimdilik basit bir token oluştur
-            String token = "dummy_token_" + user.getUserName();
+            String token = "dummy_token_" + user.getEmail();
             
             return ResponseEntity.ok(new LoginResponse(
                 true,
                 "Giriş başarılı",
                 token,
-                user.getUserName()
+                user.getName(),
+                user.getSurname(),
+                user.getEmail()
             ));
             
         } catch (Exception e) {
@@ -65,7 +66,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
         try {
-            if (user.getUserName() == null || user.getUserName().trim().isEmpty()) {
+            if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
                 return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Kullanıcı adı boş olamaz"));
