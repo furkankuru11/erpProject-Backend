@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
+import com.example.ERP_Project.entities.RiskStatus;
 
 @Entity
 @Table(name="companies")
