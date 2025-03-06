@@ -11,15 +11,22 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/companies")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class CompanyController {
 
     @Autowired
     private CompanyService companyService;
     
     @GetMapping
-    public List<Company> getAllCompanies() {
-        return companyService.getAllCompanies();
+    public ResponseEntity<?> getAllCompanies() {
+        try {
+            List<Company> companies = companyService.getAllCompanies();
+            return ResponseEntity.ok(companies);
+        } catch (Exception e) {
+            return ResponseEntity
+                .badRequest()
+                .body(new MessageResponse("Şirketler listelenemedi: " + e.getMessage()));
+        }
     }
     
     @PostMapping
@@ -66,9 +73,14 @@ public class CompanyController {
     }
     
     @GetMapping("/search")
-    public List<Company> searchCompanies(@RequestParam String query) {
-        return companyService.searchCompanies(query);
+    public ResponseEntity<?> searchCompanies(@RequestParam String query) {
+        try {
+            List<Company> companies = companyService.searchCompanies(query);
+            return ResponseEntity.ok(companies);
+        } catch (Exception e) {
+            return ResponseEntity
+                .badRequest()
+                .body(new MessageResponse("Arama yapılamadı: " + e.getMessage()));
+        }
     }
-    
-  
 } 
